@@ -3,7 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Admin;
-use App\Form\RegistrationFormType;
+use App\Form\AdminFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,7 +22,7 @@ class RegistrationController extends AbstractController
     public function register(Request $request): Response
     {
         $user = new Admin();
-        $form = $this->createForm(RegistrationFormType::class, $user);
+        $form = $this->createForm(AdminFormType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -34,15 +34,12 @@ class RegistrationController extends AbstractController
                 )
             );
 
-            $user->setIsVerified(false);
-            $user->setRoles(['ROLE_ADMIN']);
-
             $this->entityManager->persist($user);
             $this->entityManager->flush();
 
             // do anything else you need here, like send an email
 
-            return $this->redirectToRoute('admin_dashboard');
+            return $this->redirectToRoute('homepage');
         }
 
         return $this->render('registration/register.html.twig', [

@@ -10,12 +10,16 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: AdminRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_USERNAME', fields: ['username'])]
+#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[UniqueEntity(fields: ['username'], message: 'There is already an account with this username')]
+#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+#[ORM\HasLifecycleCallbacks]
 class Admin implements UserInterface, PasswordAuthenticatedUserInterface, \Stringable
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: "SEQUENCE")]
     #[ORM\Column]
+    #[ORM\SequenceGenerator(sequenceName: "admin_id_seq", allocationSize: 1)]
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
@@ -36,15 +40,26 @@ class Admin implements UserInterface, PasswordAuthenticatedUserInterface, \Strin
     #[ORM\Column]
     private bool $isVerified = false;
 
+    #[ORM\Column(length: 255, nullable: false)]
+    private string $email = '';
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: false)]
+    private \DateTimeImmutable $createdAt;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable('now');
+    }
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
     public function __toString(): string
-        {
-            return $this->username;
-        }
+    {
+        return $this->username ?? $this->email ?? 'Admin';
+    }
 
     public function getUsername(): ?string
     {
@@ -65,7 +80,7 @@ class Admin implements UserInterface, PasswordAuthenticatedUserInterface, \Strin
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->username;
+        return (string) $this->email;
     }
 
     /**
@@ -128,5 +143,26 @@ class Admin implements UserInterface, PasswordAuthenticatedUserInterface, \Strin
         return $this;
     }
 
-    
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): static
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): \DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+        return $this;
+    }
 }

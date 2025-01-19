@@ -1,0 +1,115 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion - Padel Marseille{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'padel-green': '#4CAF50',
+                        'padel-blue': '#2196F3'
+                    }
+                }
+            }
+        }
+    </script>
+{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gray-100 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
+        <div>
+            <img class="mx-auto h-24 w-auto" src="{{ asset('images/logo-padel-marseille.png') }}" alt="Padel Marseille Logo">
+            <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                Connectez-vous à votre compte
+            </h2>
+        </div>
+        
+        <form method="post" class="mt-8 space-y-6">
+            {% if error %}
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                    <span class="block sm:inline">{{ error.messageKey|trans(error.messageData, 'security') }}</span>
+                </div>
+            {% endif %}
+
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+            
+            <div class="rounded-md shadow-sm -space-y-px">
+                <div>
+                    <label for="username" class="sr-only">Nom d'utilisateur</label>
+                    <input type="text" name="_username" id="username" 
+                        class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-padel-blue focus:border-padel-blue focus:z-10 sm:text-sm" 
+                        placeholder="Nom d'utilisateur" required autofocus>
+                </div>
+                <div>
+                    <label for="password" class="sr-only">Mot de passe</label>
+                    <input type="password" name="_password" id="password" 
+                        class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-padel-blue focus:border-padel-blue focus:z-10 sm:text-sm" 
+                        placeholder="Mot de passe" required>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <input id="remember_me" name="_remember_me" type="checkbox" 
+                        class="h-4 w-4 text-padel-blue focus:ring-padel-blue border-gray-300 rounded">
+                    <label for="remember_me" class="ml-2 block text-sm text-gray-900">
+                        Se souvenir de moi
+                    </label>
+                </div>
+
+                <div class="text-sm">
+                    <a href="#" class="font-medium text-padel-blue hover:text-blue-500">
+                        Mot de passe oublié ?
+                    </a>
+                </div>
+            </div>
+
+            <div>
+                <button type="submit" 
+                    class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-padel-blue hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-padel-blue">
+                    <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                        <svg class="h-5 w-5 text-blue-500 group-hover:text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                        </svg>
+                    </span>
+                    Connexion
+                </button>
+            </div>
+        </form>
+
+        <div class="mt-6 text-center">
+            <p class="text-sm text-gray-600">
+                Vous n'avez pas de compte ? 
+                <a href="{{ path('app_register') }}" class="font-medium text-padel-blue hover:text-blue-500">
+                    Inscrivez-vous
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        
+        // Optional: Add some client-side validation
+        usernameInput.addEventListener('input', function() {
+            this.value = this.value.trim();
+        });
+        
+        passwordInput.addEventListener('input', function() {
+            if (this.value.length > 0) {
+                this.classList.remove('border-red-500');
+            }
+        });
+    });
+</script>
+{% endblock %}

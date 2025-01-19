@@ -48,6 +48,19 @@
                         }
                     }) }}
                 </div>
+                <div>
+                    {{ form_label(registrationForm.email, 'Email', {
+                        'label_attr': {
+                            'class': 'sr-only'
+                        }
+                    }) }}
+                    {{ form_widget(registrationForm.email, {
+                        'attr': {
+                            'class': 'appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-padel-blue focus:border-padel-blue focus:z-10 sm:text-sm',
+                            'placeholder': 'Email'
+                        }
+                    }) }}
+                </div>
                 <div class="relative">
                     {{ form_label(registrationForm.plainPassword, 'Mot de passe', {
                         'label_attr': {
@@ -103,7 +116,7 @@
         <div class="mt-4 text-center w-full">
             <p class="text-sm text-gray-600 w-full">
                 Vous avez déjà un compte ? 
-                <a href="#" class="font-medium text-padel-blue hover:text-blue-500 block w-full text-center mt-2 py-2 bg-gray-100 rounded-md">
+                <a href="{{ path('app_login') }}" class="font-medium text-padel-blue hover:text-blue-500 block w-full text-center mt-2 py-2 bg-gray-100 rounded-md">
                     Connectez-vous
                 </a>
             </p>
