@@ -20,15 +20,29 @@ final class Version20250119193055 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE admin ADD email VARCHAR(255) NOT NULL');
-        $this->addSql('CREATE UNIQUE INDEX UNIQ_IDENTIFIER_EMAIL ON admin (email)');
+        $table = $schema->getTable('admin');
+        
+        if (!$table->hasColumn('email')) {
+            $this->addSql('ALTER TABLE admin ADD email VARCHAR(255) DEFAULT \'default_\' || (random() * 10000)::text || \'@example.com\' NOT NULL');
+            $this->addSql('CREATE UNIQUE INDEX UNIQ_IDENTIFIER_EMAIL ON admin (email)');
+        }
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE SCHEMA public');
-        $this->addSql('DROP INDEX UNIQ_IDENTIFIER_EMAIL');
-        $this->addSql('ALTER TABLE admin DROP email');
+        $table = $schema->getTable('admin');
+        
+        if ($table->hasColumn('email')) {
+            $this->addSql('DROP INDEX UNIQ_IDENTIFIER_EMAIL');
+            $this->addSql('ALTER TABLE admin DROP email');
+        }
+    }
+}
+
+        if ($table->hasColumn('email')) {
+            $this->addSql('DROP INDEX UNIQ_IDENTIFIER_EMAIL');
+            $this->addSql('ALTER TABLE admin DROP email');
+        }
     }
 }

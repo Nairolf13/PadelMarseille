@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tableau de bord{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="mb-4">Tableau de bord</h1>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    Réservations à venir
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ totalReservations }} réservation(s)</h5>
+                    <p class="card-text">Nombre total de réservations futures</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    Utilisation des terrains
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for court, count in courtUsage %}
+                        <div class="col-md-4">
+                            <div class="card text-center mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">Terrain {{ court }}</h5>
+                                    <p class="card-text">{{ count }} réservation(s)</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            Liste des réservations à venir
+        </div>
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Heure</th>
+                        <th>Terrain</th>
+                        <th>Nombre de joueurs</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reservation in futureReservations %}
+                    <tr>
+                        <td>{{ reservation.date|date('d/m/Y') }}</td>
+                        <td>{{ reservation.time }}</td>
+                        <td>{{ reservation.court }}</td>
+                        <td>{{ reservation.players }}</td>
+                        <td>
+                            <a href="{{ path('app_reservation_edit', {'id': reservation.id}) }}" class="btn btn-sm btn-primary">Modifier</a>
+                            <a href="{{ path('app_reservation_delete', {'id': reservation.id}) }}" class="btn btn-sm btn-danger">Supprimer</a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center">Aucune réservation à venir</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
