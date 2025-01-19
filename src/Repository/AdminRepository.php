@@ -11,6 +11,11 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 
 /**
  * @extends ServiceEntityRepository<Admin>
+ *
+ * @method Admin|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Admin|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Admin[]    findAll()
+ * @method Admin[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class AdminRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
@@ -25,7 +30,7 @@ class AdminRepository extends ServiceEntityRepository implements PasswordUpgrade
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
     {
         if (!$user instanceof Admin) {
-            throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', $user::class));
+            throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', \get_class($user)));
         }
 
         $user->setPassword($newHashedPassword);
@@ -33,28 +38,27 @@ class AdminRepository extends ServiceEntityRepository implements PasswordUpgrade
         $this->getEntityManager()->flush();
     }
 
-    //    /**
-    //     * @return Admin[] Returns an array of Admin objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('a')
-    //            ->andWhere('a.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('a.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * Find an admin by username
+     */
+    public function findByUsername(string $username): ?Admin
+    {
+        return $this->findOneBy(['username' => $username]);
+    }
 
-    //    public function findOneBySomeField($value): ?Admin
-    //    {
-    //        return $this->createQueryBuilder('a')
-    //            ->andWhere('a.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    /**
+     * Custom method to create a new admin
+     */
+    public function createAdmin(string $username, string $hashedPassword, array $roles = ['ROLE_ADMIN']): Admin
+    {
+        $admin = new Admin();
+        $admin->setUsername($username)
+              ->setPassword($hashedPassword)
+              ->setRoles($roles);
+
+        $this->getEntityManager()->persist($admin);
+        $this->getEntityManager()->flush();
+
+        return $admin;
+    }
 }
