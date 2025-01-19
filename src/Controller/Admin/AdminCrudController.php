@@ -20,8 +20,10 @@ class AdminCrudController extends AbstractCrudController
     {
       yield IdField::new('id')->hideOnForm();
       yield TextField::new('username');
+      yield TextField::new('email');
       yield TextField::new('password');
       yield ArrayField::new('roles');
+      yield TextEditorField::new('created_at');
     }
     
 
